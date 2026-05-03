@@ -1,0 +1,210 @@
+<div class="min-h-screen bg-gradient-to-br from-[#1b2838] to-[#0f1419]">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 border-b border-white/10 bg-[#1b2838]/80 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button routerLink="/categorias" 
+                class="glass rounded-lg px-3 py-2 border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-all">
+          <span class="material-icons">arrow_back</span>
+        </button>
+        <div>
+          <h1 class="text-2xl font-bold text-white tracking-tight">
+            {{ category?.name || 'Categoría' }}
+          </h1>
+          <p class="text-xs text-white/50 uppercase tracking-widest mt-1">
+            {{ achievements.length }} logros disponibles
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button (click)="openEditCategoryModal()"
+                class="glass rounded-lg px-3 py-2 border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-all"
+                title="Editar categoría">
+          <span class="material-icons text-lg">edit</span>
+        </button>
+        <div class="glass rounded-lg px-4 py-2 border border-white/10 text-right hidden sm:block">
+          <p class="text-xs text-white/60 uppercase tracking-widest">Completados</p>
+          <p class="text-lg font-bold text-white">{{ completedAchievements.length }}/{{ achievements.length }}</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="max-w-6xl mx-auto px-6 py-8">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+      <div class="animate-spin">
+        <span class="material-icons text-5xl text-[#66c0f4]">emoji_events</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div *ngIf="!isLoading" class="space-y-8 animate-fade-in">
+      <!-- Tab Navigation -->
+      <div class="flex gap-2 border-b border-white/10 overflow-x-auto">
+        <button (click)="setTab('pending')"
+                class="pb-4 px-2 text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap"
+                [ngClass]="activeTab === 'pending' ? 'text-white' : 'text-white/50'">
+          Pendientes ({{ pendingAchievements.length }})
+          <div class="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#66c0f4] to-[#1a9fff] transition-all duration-300"
+               [ngClass]="activeTab === 'pending' ? 'w-full' : 'w-0'"></div>
+        </button>
+        
+        <button (click)="setTab('completed')"
+                class="pb-4 px-2 text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap"
+                [ngClass]="activeTab === 'completed' ? 'text-white' : 'text-white/50'">
+          Completados ({{ completedAchievements.length }})
+          <div class="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#66c0f4] to-[#1a9fff] transition-all duration-300"
+               [ngClass]="activeTab === 'completed' ? 'w-full' : 'w-0'"></div>
+        </button>
+        
+        <button (click)="setTab('all')"
+                class="pb-4 px-2 text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap"
+                [ngClass]="activeTab === 'all' ? 'text-white' : 'text-white/50'">
+          Todos
+          <div class="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#66c0f4] to-[#1a9fff] transition-all duration-300"
+               [ngClass]="activeTab === 'all' ? 'w-full' : 'w-0'"></div>
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="space-y-4 animate-slide-in-up">
+        <!-- Empty State -->
+        <div *ngIf="getDisplayAchievements().length === 0" class="text-center py-16">
+          <span class="material-icons text-6xl text-white/20 mb-4 block">celebration</span>
+          <h3 class="text-xl font-bold text-white">
+            {{ activeTab === 'pending' ? '¡Sin logros pendientes!' : 'Sin logros aún' }}
+          </h3>
+          <p class="text-sm text-white/50 mt-2">
+            {{ activeTab === 'pending' ? 'Todos los logros han sido completados' : 'Completa logros para verlos aquí' }}
+          </p>
+        </div>
+
+        <!-- Achievements Grid -->
+        <div *ngIf="getDisplayAchievements().length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- ACHIEVEMENT CARD -->
+          <div *ngFor="let achievement of getDisplayAchievements()" 
+               class="group rounded-2xl glass border border-white/10 overflow-hidden hover:border-white/30 transition-all duration-300 hover:shadow-2xl animate-scale-in"
+               [style]="'border-color: ' + (getLevelForAchievement(achievement)?.color || '#66c0f4') + '40'">
+            
+            <!-- PENDING LAYOUT -->
+            <div *ngIf="!achievement.is_completed" class="p-6 space-y-4 bg-gradient-to-br from-white/5 to-transparent">
+              <!-- Image Preview and Level Badge -->
+              <div class="flex gap-4 items-start">
+                <!-- Image Preview Square -->
+                <div class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gradient-to-br from-white/10 to-transparent border border-white/10">
+                  <img *ngIf="achievement.photo_url" 
+                       [src]="achievement.photo_url" 
+                       alt="{{ achievement.title }}"
+                       class="w-full h-full object-cover">
+                  <div *ngIf="!achievement.photo_url" class="w-full h-full flex items-center justify-center">
+                    <span class="material-icons text-2xl text-white/30">image</span>
+                  </div>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                  <!-- Level Badge and Points -->
+                  <div class="flex items-center justify-between gap-2 mb-2">
+                    <span class="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-lg flex-shrink-0"
+                          [style]="'background: ' + (getLevelForAchievement(achievement)?.color || '#66c0f4') + '20; color: ' + (getLevelForAchievement(achievement)?.color || '#66c0f4')">
+                      {{ getLevelForAchievement(achievement)?.name || 'Desconocido' }}
+                    </span>
+                    <span class="text-xs font-bold text-white/60 flex-shrink-0">
+                      +{{ getLevelForAchievement(achievement)?.points }} pts
+                    </span>
+                  </div>
+
+                  <!-- Title -->
+                  <h3 class="text-lg font-bold text-white group-hover:text-[#66c0f4] transition-colors truncate">
+                    {{ achievement.title }}
+                  </h3>
+
+                  <!-- Description -->
+                  <p class="text-sm text-white/70 line-clamp-2 mt-1">
+                    {{ achievement.description }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="flex gap-2 pt-2">
+                <button (click)="openEditAchievementModal(achievement)"
+                        class="flex items-center justify-center gap-2 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all active:scale-95">
+                  <span class="material-icons text-sm">edit</span>
+                </button>
+                <button (click)="openCompletionModal(achievement)"
+                        class="flex-1 py-2 px-4 bg-gradient-to-r from-[#66c0f4] to-[#1a9fff] text-white font-bold uppercase tracking-widest rounded-lg
+                               hover:shadow-lg hover:shadow-[#66c0f4]/50 transition-all active:scale-95">
+                  <span class="material-icons align-middle mr-2 text-sm">check_circle</span>
+                  <span class="text-xs">Completar</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- COMPLETED LAYOUT -->
+            <div *ngIf="achievement.is_completed" class="overflow-hidden relative">
+              <!-- Achievement Photo -->
+              <div class="aspect-video relative overflow-hidden bg-gradient-to-br from-white/10 to-transparent">
+                <img *ngIf="achievement.photo_url" 
+                     [src]="achievement.photo_url" 
+                     alt="{{ achievement.title }}"
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                <div *ngIf="!achievement.photo_url" class="flex items-center justify-center h-full">
+                  <span class="material-icons text-5xl text-white/20">image</span>
+                </div>
+                
+                <!-- Overlay Gradient -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0f1419] via-transparent to-transparent"></div>
+
+                <!-- Uncomplete Button -->
+                <button (click)="uncompleteAchievement(achievement)"
+                        class="absolute top-3 right-3 px-3 py-2 bg-red-500/80 hover:bg-red-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest transition-all active:scale-95 flex items-center gap-1">
+                  <span class="material-icons text-sm">undo</span>
+                  Desmarcar
+                </button>
+              </div>
+
+              <!-- Content Overlay -->
+              <div class="absolute bottom-0 left-0 right-0 p-6">
+                <h3 class="text-lg font-bold text-white mb-2">
+                  {{ achievement.title }}
+                </h3>
+                <div class="flex justify-between items-center text-sm text-white/70">
+                  <span>{{ formatDate(achievement.completed_at) }}</span>
+                  <span class="font-bold text-[#66c0f4]">+{{ getLevelForAchievement(achievement)?.points }} pts</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for completing achievement -->
+  <app-modal-complete-achievement 
+    [isOpen]="isModalOpen"
+    [achievement]="selectedAchievement"
+    (close)="closeModal()"
+    (completed)="onAchievementCompleted($event)">
+  </app-modal-complete-achievement>
+
+  <!-- Modal for editing achievement -->
+  <app-modal-edit-achievement-form
+    [isOpen]="isEditAchievementModalOpen"
+    [achievement]="selectedAchievementToEdit"
+    [levels]="levels"
+    (close)="closeEditAchievementModal()"
+    (updated)="onAchievementUpdated($event)">
+  </app-modal-edit-achievement-form>
+
+  <!-- Modal for editing category -->
+  <app-modal-edit-category
+    [isOpen]="isEditCategoryModalOpen"
+    [category]="category"
+    (close)="closeEditCategoryModal()"
+    (updated)="onCategoryUpdated($event)">
+  </app-modal-edit-category>
+</div>

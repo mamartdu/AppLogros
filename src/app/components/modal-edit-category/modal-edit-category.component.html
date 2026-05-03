@@ -1,0 +1,90 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
+  <!-- Overlay -->
+  <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-fade-in" (click)="!isLoading && closeModal()"></div>
+
+  <!-- Modal Content (Bottom Sheet on Mobile) -->
+  <div class="relative bg-white rounded-t-[3rem] sm:rounded-[3rem] w-full max-w-lg shadow-2xl overflow-hidden animate-slide-in-up">
+    <!-- Drag Handle for Mobile -->
+    <div class="sm:hidden w-12 h-1.5 bg-slate-200 rounded-full mx-auto mt-4 mb-2"></div>
+
+    <div class="p-8 pt-4 sm:pt-8">
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h3 class="text-2xl font-black text-slate-900 tracking-tight">Editar Categoría</h3>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Personaliza tu categoría</p>
+        </div>
+        <button [disabled]="isLoading" (click)="closeModal()" class="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-slate-600 rounded-2xl transition-all active:scale-90">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="form" class="space-y-6">
+        <!-- Name Field -->
+        <div>
+          <label class="text-xs font-black text-slate-700 uppercase tracking-widest block mb-2">Nombre de la Categoría</label>
+          <input 
+            type="text" 
+            formControlName="name"
+            [disabled]="isLoading"
+            class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:border-rose-500 outline-none text-slate-900 font-bold transition-colors disabled:bg-slate-50"
+            placeholder="Nombre de la categoría">
+          <p *ngIf="form.get('name')?.hasError('minlength')" class="text-[10px] text-rose-500 font-bold mt-1 uppercase tracking-widest">Mínimo 2 caracteres</p>
+        </div>
+
+        <!-- Icon Selection -->
+        <div>
+          <label class="text-xs font-black text-slate-700 uppercase tracking-widest block mb-3">Ícono</label>
+          <div class="grid grid-cols-6 gap-2">
+            <button 
+              *ngFor="let icon of materialIcons"
+              type="button"
+              [disabled]="isLoading"
+              (click)="selectIcon(icon)"
+              [class.ring-2]="selectedIcon === icon"
+              [style]="selectedIcon === icon ? 'ring-color: ' + selectedColor : ''"
+              class="aspect-square rounded-xl flex items-center justify-center bg-slate-100 hover:bg-slate-200 transition-all"
+              [ngClass]="selectedIcon === icon ? 'ring-offset-2 ring-offset-white' : ''">
+              <span class="material-icons text-slate-600 text-xl" [style]="selectedIcon === icon ? 'color: ' + selectedColor : ''">{{ icon }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Color Selection -->
+        <div>
+          <label class="text-xs font-black text-slate-700 uppercase tracking-widest block mb-3">Color</label>
+          <div class="grid grid-cols-5 gap-3">
+            <button 
+              *ngFor="let color of colors"
+              type="button"
+              [disabled]="isLoading"
+              (click)="selectColor(color)"
+              [style]="'background-color: ' + color"
+              [class.ring-2]="selectedColor === color"
+              class="aspect-square rounded-xl transition-all hover:scale-110"
+              [ngClass]="selectedColor === color ? 'ring-4 ring-offset-2 ring-offset-white' : ''">
+            </button>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex gap-4 pt-4">
+          <button 
+            type="button"
+            [disabled]="isLoading"
+            (click)="closeModal()"
+            class="flex-1 py-4 px-6 bg-slate-100 text-slate-600 text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-slate-200 active:scale-95 transition-all disabled:opacity-50">
+            Cancelar
+          </button>
+          <button 
+            type="button"
+            [disabled]="!form.valid || isLoading"
+            (click)="submitForm()"
+            class="flex-[2] py-4 px-6 bg-gradient-to-r from-rose-500 to-indigo-600 text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-rose-200 hover:shadow-rose-300 active:scale-95 transition-all flex justify-center items-center disabled:opacity-70">
+            <span *ngIf="!isLoading">Guardar Cambios</span>
+            <div *ngIf="isLoading" class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

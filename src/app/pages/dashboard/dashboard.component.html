@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-gradient-to-br from-[#1b2838] to-[#0f1419] p-6 md:p-8">
+  <div class="max-w-2xl mx-auto">
+    <!-- Header -->
+    <header class="mb-12 animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">
+        Tu Progreso
+      </h1>
+      <p class="text-white/50 mt-2 text-lg">Juntos hacia el éxito</p>
+    </header>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <div class="animate-spin">
+        <span class="material-icons text-5xl text-[#66c0f4]">auto_awesome</span>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!isLoading && stats && currentLevel" class="space-y-6 animate-fade-in">
+      <!-- Main Trophy Card (Square) -->
+      <div class="aspect-square rounded-2xl glass border border-white/10 p-8 flex flex-col items-center justify-center text-center shadow-2xl hover:border-white/20 transition-all duration-300"
+           [style]="'border-color: ' + currentLevel.color">
+        <!-- Trophy Icon -->
+        <div class="mb-6 relative">
+          <div class="absolute inset-0 rounded-full blur-3xl"
+               [style]="'background: ' + currentLevel.color + '20'"></div>
+          <span class="material-icons text-7xl md:text-8xl text-yellow-400 relative drop-shadow-lg">
+            emoji_events
+          </span>
+        </div>
+
+        <!-- Points -->
+        <div class="mb-4">
+          <p class="text-sm font-semibold text-white/60 uppercase tracking-widest mb-2">
+            Puntos Totales
+          </p>
+          <p class="text-6xl md:text-7xl font-black text-white" [style]="'text-shadow: 0 0 30px ' + currentLevel.color">
+            {{ stats.total_points }}
+          </p>
+        </div>
+
+        <!-- Current Level -->
+        <div class="mt-6 px-4 py-2 rounded-lg" [style]="'background: ' + currentLevel.color + '20; border: 1px solid ' + currentLevel.color + '60'">
+          <p class="text-sm uppercase tracking-widest font-bold" [style]="'color: ' + currentLevel.color">
+            {{ currentLevel.name }}
+          </p>
+        </div>
+
+        <!-- Achievements Count -->
+        <div class="mt-6 text-white/60">
+          <p class="text-sm">
+            <span class="font-bold text-white">{{ stats.total_completed }}</span> logros completados
+          </p>
+        </div>
+      </div>
+
+      <!-- Progress to Next Level -->
+      <div *ngIf="nextLevel" class="rounded-2xl glass border border-white/10 p-6 shadow-2xl animate-slide-in-up"
+           style="animation-delay: 0.2s">
+        <p class="text-sm font-semibold text-white/60 uppercase tracking-widest mb-3">
+          Progreso hacia {{ nextLevel.name }}
+        </p>
+
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-sm text-white/80">
+            {{ currentPoints }}/{{ pointsForNext }} puntos
+          </span>
+          <span class="text-sm font-bold text-[#66c0f4]">
+            {{ progressPercentage.toFixed(0) }}%
+          </span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full h-3 bg-white/5 rounded-full overflow-hidden border border-white/10">
+          <div class="h-full bg-gradient-to-r from-[#66c0f4] to-[#1a9fff] rounded-full transition-all duration-500 ease-out"
+               [style.width.%]="progressPercentage"></div>
+        </div>
+
+        <div class="flex justify-between mt-3 text-xs text-white/50">
+          <span>{{ currentLevel.name }}</span>
+          <span>{{ nextLevel.name }}</span>
+        </div>
+      </div>
+
+      <!-- Last Activity Card -->
+      <div class="rounded-2xl glass border border-white/10 p-6 shadow-2xl animate-slide-in-up"
+           style="animation-delay: 0.4s">
+        <p class="text-sm font-semibold text-white/60 uppercase tracking-widest mb-2">
+          Última Actividad
+        </p>
+        <p class="text-lg text-white">
+          {{ formatDate(lastActivityDate) }}
+        </p>
+      </div>
+
+      <!-- CTA Button -->
+      <button routerLink="/categorias" 
+              class="w-full py-4 px-6 rounded-2xl font-bold uppercase tracking-widest transition-all duration-300 text-center mt-8
+                     bg-gradient-to-r from-[#66c0f4] to-[#1a9fff] text-white hover:shadow-2xl hover:shadow-[#66c0f4]/50 
+                     active:scale-95 animate-slide-in-up"
+              style="animation-delay: 0.6s">
+        <span class="material-icons align-middle mr-2">arrow_forward</span>
+        Explorar Categorías
+      </button>
+    </div>
+  </div>
+</div>

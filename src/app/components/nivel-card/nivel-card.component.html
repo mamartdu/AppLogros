@@ -1,0 +1,52 @@
+<div class="bg-gradient-to-br from-slate-900 to-indigo-950 rounded-[3rem] p-8 text-white shadow-2xl relative overflow-hidden group">
+  <!-- Decoraciones de fondo animadas -->
+  <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500 opacity-20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000"></div>
+  <div class="absolute -bottom-20 -left-10 w-40 h-40 bg-rose-500 opacity-10 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000 delay-150"></div>
+  <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03]"></div>
+
+  <div class="relative z-10">
+    <div class="flex justify-between items-start mb-8">
+      <div>
+        <h2 class="text-[10px] font-black opacity-50 uppercase tracking-[0.2em] mb-2">Nivel de Pareja</h2>
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-[1.5rem] bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner animate-bounce-subtle">
+            <span class="material-icons text-4xl" [style.color]="currentLevel.color">workspace_premium</span>
+          </div>
+          <div>
+            <span class="text-3xl font-black tracking-tight" [style.color]="currentLevel.color">{{ currentLevel.name }}</span>
+            <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest mt-1">Estatus Actual</p>
+          </div>
+        </div>
+      </div>
+      <div class="text-right">
+        <p class="text-4xl font-black tracking-tighter">{{ points }}</p>
+        <p class="text-[10px] font-black opacity-50 uppercase tracking-widest mt-1">Puntos Totales</p>
+      </div>
+    </div>
+
+    <div class="mt-8" *ngIf="nextLevel">
+      <div class="flex justify-between items-end mb-3">
+        <div>
+          <span class="text-[10px] font-black opacity-50 uppercase tracking-widest block mb-1">Próximo Nivel</span>
+          <span class="text-sm font-bold text-indigo-200">{{ nextLevel.name }}</span>
+        </div>
+        <div class="text-right">
+          <span class="text-xs font-black tracking-widest">{{ points }} <span class="opacity-30">/</span> {{ nextLevel.required_points }}</span>
+        </div>
+      </div>
+      
+      <div class="w-full bg-white/10 backdrop-blur-sm rounded-full h-4 p-1 border border-white/5">
+        <div class="bg-gradient-to-r from-indigo-400 to-rose-400 rounded-full h-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(129,140,248,0.5)]" 
+             [style.width.%]="progress">
+          <div class="w-full h-full bg-[linear-gradient(45deg,rgba(255,255,255,0.2)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.2)_75%,transparent_75%,transparent)] bg-[length:20px_20px] animate-[pulse_2s_linear_infinite]"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8 p-4 bg-white/5 rounded-2xl border border-white/5 text-center" *ngIf="!nextLevel">
+      <p class="text-sm font-black uppercase tracking-[0.2em] bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-200 bg-clip-text text-transparent animate-pulse">
+        ¡Nivel Máximo Alcanzado!
+      </p>
+    </div>
+  </div>
+</div>

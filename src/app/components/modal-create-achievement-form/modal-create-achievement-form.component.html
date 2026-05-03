@@ -1,0 +1,143 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
+  <!-- Overlay -->
+  <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-fade-in" (click)="!isLoading && closeModal()"></div>
+
+  <!-- Modal Content -->
+  <div class="relative bg-gradient-to-br from-[#1b2838] to-[#0f1419] border border-white/10 rounded-t-[3rem] sm:rounded-[3rem] w-full max-w-lg shadow-2xl overflow-hidden animate-slide-in-up max-h-[90vh] overflow-y-auto">
+    <!-- Drag Handle for Mobile -->
+    <div class="sm:hidden w-12 h-1.5 bg-white/20 rounded-full mx-auto mt-4 mb-2"></div>
+
+    <div class="p-8 pt-4 sm:pt-8">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h3 class="text-2xl font-bold text-white tracking-tight">Nuevo Logro</h3>
+          <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Crea un nuevo logro para completar</p>
+        </div>
+        <button [disabled]="isLoading" (click)="closeModal()" class="w-10 h-10 flex items-center justify-center bg-white/10 text-white/70 hover:text-white rounded-2xl transition-all active:scale-90">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="form" (ngSubmit)="submitForm()" class="space-y-6">
+        <!-- Title Input -->
+        <div>
+          <label class="block text-xs font-bold text-white/70 uppercase tracking-widest mb-3">Título del Logro</label>
+          <input
+            type="text"
+            formControlName="title"
+            placeholder="Ej: Escalar una montaña"
+            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#66c0f4] focus:border-transparent transition-all">
+          <p *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="text-xs text-red-400 mt-2">
+            El título es requerido (mínimo 3 caracteres)
+          </p>
+        </div>
+
+        <!-- Description Input -->
+        <div>
+          <label class="block text-xs font-bold text-white/70 uppercase tracking-widest mb-3">Descripción</label>
+          <textarea
+            formControlName="description"
+            placeholder="Describe el logro en detalle..."
+            rows="3"
+            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#66c0f4] focus:border-transparent transition-all resize-none"></textarea>
+          <p *ngIf="form.get('description')?.invalid && form.get('description')?.touched" class="text-xs text-red-400 mt-2">
+            La descripción es requerida (mínimo 5 caracteres)
+          </p>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div>
+          <label class="block text-xs font-bold text-white/70 uppercase tracking-widest mb-3">Categoría</label>
+          <select
+            formControlName="categoryId"
+            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#66c0f4] focus:border-transparent transition-all appearance-none cursor-pointer">
+            <option value="" class="bg-[#1b2838] text-white">Selecciona una categoría</option>
+            <option *ngFor="let cat of categories" [value]="cat.id" class="bg-[#1b2838] text-white">
+              {{ cat.name }}
+            </option>
+          </select>
+          <p *ngIf="form.get('categoryId')?.invalid && form.get('categoryId')?.touched" class="text-xs text-red-400 mt-2">
+            La categoría es requerida
+          </p>
+        </div>
+
+        <!-- Level Dropdown -->
+        <div>
+          <label class="block text-xs font-bold text-white/70 uppercase tracking-widest mb-3">Nivel de Dificultad</label>
+          <select
+            formControlName="levelId"
+            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#66c0f4] focus:border-transparent transition-all appearance-none cursor-pointer">
+            <option value="" class="bg-[#1b2838] text-white">Selecciona un nivel</option>
+            <option *ngFor="let level of levels" [value]="level.id" class="bg-[#1b2838] text-white">
+              {{ level.name }} (+{{ level.points }} pts)
+            </option>
+          </select>
+          <p *ngIf="form.get('levelId')?.invalid && form.get('levelId')?.touched" class="text-xs text-red-400 mt-2">
+            El nivel es requerido
+          </p>
+        </div>
+
+        <!-- Photo Section (Optional) -->
+        <div>
+          <label class="block text-xs font-bold text-white/70 uppercase tracking-widest mb-3">Foto (Opcional)</label>
+          
+          <!-- Upload Zone -->
+          <div *ngIf="!imageChangedEvent" class="border-2 border-dashed border-white/20 rounded-2xl p-8 text-center bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all cursor-pointer relative group">
+            <input type="file" (change)="fileChangeEvent($event)" accept="image/png, image/jpeg, image/jpg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" [disabled]="isLoading">
+            <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+              <span class="material-icons text-3xl text-white/50 group-hover:text-[#66c0f4] transition-colors">add_a_photo</span>
+            </div>
+            <p class="text-sm font-bold text-white/80">Toca para agregar foto</p>
+            <p class="text-xs text-white/40 mt-1">Opcional - puedes completarlo sin foto</p>
+          </div>
+
+          <!-- Cropper Zone -->
+          <div *ngIf="imageChangedEvent" class="animate-fade-in space-y-4">
+            <div class="rounded-2xl overflow-hidden bg-black shadow-inner border border-white/10">
+              <image-cropper
+                [imageChangedEvent]="imageChangedEvent"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="1 / 1"
+                format="jpeg"
+                (imageCropped)="imageCropped($event)"
+                class="max-h-[250px]">
+              </image-cropper>
+            </div>
+            
+            <div class="flex gap-2">
+              <button [disabled]="isLoading" (click)="resetPhoto()" type="button" class="flex-1 py-3 px-4 bg-white/10 text-white/70 rounded-xl font-bold uppercase tracking-widest hover:bg-white/20 active:scale-95 transition-all text-sm">
+                Cambiar
+              </button>
+              <button (click)="skipPhotoStep()" [disabled]="isLoading" type="button" class="flex-1 py-3 px-4 bg-white/5 border border-white/10 text-white/70 rounded-xl font-bold uppercase tracking-widest hover:bg-white/10 active:scale-95 transition-all text-sm">
+                Saltar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div *ngIf="!imageChangedEvent" class="flex gap-3 pt-4 sticky bottom-0 bg-gradient-to-t from-[#0f1419] via-[#0f1419] to-transparent p-4 -mx-8 -mb-8 px-8">
+          <button
+            type="button"
+            [disabled]="isLoading"
+            (click)="closeModal()"
+            class="flex-1 py-3 px-4 bg-white/5 text-white/70 border border-white/10 rounded-xl font-bold uppercase tracking-widest hover:bg-white/10 active:scale-95 transition-all disabled:opacity-50">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            [disabled]="form.invalid || isLoading || isUploading"
+            class="flex-1 py-3 px-4 bg-gradient-to-r from-[#66c0f4] to-[#1a9fff] text-white font-bold uppercase tracking-widest rounded-xl hover:shadow-lg hover:shadow-[#66c0f4]/50 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+            <span *ngIf="!isLoading && !isUploading" class="material-icons">add</span>
+            <span *ngIf="isLoading || isUploading" class="animate-spin inline-block">
+              <span class="material-icons">sync</span>
+            </span>
+            {{ isLoading || isUploading ? 'Creando...' : 'Crear' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

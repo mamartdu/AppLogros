@@ -1,0 +1,19 @@
+/* Categorias Component Styles */
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+/* Card hover effect */
+a {
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :host {
+    padding: 0;
+  }
+}
+

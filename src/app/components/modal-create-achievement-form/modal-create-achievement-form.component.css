@@ -1,0 +1,66 @@
+/* Modal Create Achievement Form Component Styles */
+
+:host {
+  display: block;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-in-up {
+  animation: slide-in-up 0.4s ease-out;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+textarea {
+  font-family: inherit;
+}
+
+/* Custom select styling */
+select {
+  color-scheme: dark;
+}
+
+/* Scroll behavior */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(102, 192, 244, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 192, 244, 0.5);
+}

@@ -1,0 +1,110 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
+  <!-- Overlay -->
+  <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-fade-in" (click)="!isLoading && closeModal()"></div>
+
+  <!-- Modal Content -->
+  <div class="relative bg-gradient-to-br from-[#1b2838] to-[#0f1419] border border-white/10 rounded-t-[3rem] sm:rounded-[3rem] w-full max-w-lg shadow-2xl overflow-hidden animate-slide-in-up">
+    <!-- Drag Handle for Mobile -->
+    <div class="sm:hidden w-12 h-1.5 bg-white/20 rounded-full mx-auto mt-4 mb-2"></div>
+
+    <div class="p-8 pt-4 sm:pt-8">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h3 class="text-2xl font-bold text-white tracking-tight">Nueva Categoría</h3>
+          <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Crea una nueva categoría de logros</p>
+        </div>
+        <button [disabled]="isLoading" (click)="closeModal()" class="w-10 h-10 flex items-center justify-center bg-white/10 text-white/70 hover:text-white rounded-2xl transition-all active:scale-90">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="form" (ngSubmit)="submitForm()" class="space-y-6">
+        <!-- Name Input -->
+        <div>
+          <label class="block text-xs font-bold text-white/70 uppercase tracking-widest mb-3">Nombre de la Categoría</label>
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Ej: Aventura, Romance, Gastronomía"
+            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#66c0f4] focus:border-transparent transition-all">
+          <p *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="text-xs text-red-400 mt-2">
+            El nombre es requerido (mínimo 2 caracteres)
+          </p>
+        </div>
+
+        <!-- Icon Selection -->
+        <div>
+          <label class="block text-xs font-bold text-white/70 uppercase tracking-widest mb-3">Ícono</label>
+          <div class="grid grid-cols-6 gap-2">
+            <button
+              *ngFor="let icon of materialIcons"
+              type="button"
+              (click)="selectIcon(icon)"
+              class="aspect-square flex items-center justify-center rounded-lg border-2 transition-all"
+              [ngClass]="selectedIcon === icon 
+                ? 'border-[#66c0f4] bg-[#66c0f4]/20 text-[#66c0f4]' 
+                : 'border-white/10 bg-white/5 text-white/50 hover:border-white/30'">
+              <span class="material-icons">{{ icon }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Color Selection -->
+        <div>
+          <label class="block text-xs font-bold text-white/70 uppercase tracking-widest mb-3">Color</label>
+          <div class="grid grid-cols-5 gap-3">
+            <button
+              *ngFor="let color of colors"
+              type="button"
+              (click)="selectColor(color)"
+              class="aspect-square rounded-lg border-2 transition-all"
+              [style]="'background-color: ' + color + '40; border-color: ' + (selectedColor === color ? color : 'transparent')"
+              [ngClass]="selectedColor === color 
+                ? 'ring-2 ring-offset-2' 
+                : 'hover:border-white/30'"
+              [style.ring-color]="selectedColor === color ? color : ''"
+              [style.ring-offset-color]="selectedColor === color ? '#0f1419' : ''">
+            </button>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="p-4 bg-white/5 border border-white/10 rounded-xl">
+          <p class="text-xs text-white/50 uppercase tracking-widest mb-3">Vista Previa</p>
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center" [style]="'background-color: ' + selectedColor + '20; color: ' + selectedColor">
+              <span class="material-icons text-2xl">{{ selectedIcon }}</span>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-white">{{ form.get('name')?.value || 'Nombre Categoría' }}</p>
+              <p class="text-xs text-white/50">0/0 logros completados</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-3 pt-4">
+          <button
+            type="button"
+            [disabled]="isLoading"
+            (click)="closeModal()"
+            class="flex-1 py-3 px-4 bg-white/5 text-white/70 border border-white/10 rounded-xl font-bold uppercase tracking-widest hover:bg-white/10 active:scale-95 transition-all disabled:opacity-50">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            [disabled]="form.invalid || isLoading"
+            class="flex-1 py-3 px-4 bg-gradient-to-r from-[#66c0f4] to-[#1a9fff] text-white font-bold uppercase tracking-widest rounded-xl hover:shadow-lg hover:shadow-[#66c0f4]/50 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+            <span *ngIf="!isLoading" class="material-icons">add</span>
+            <span *ngIf="isLoading" class="animate-spin inline-block">
+              <span class="material-icons">sync</span>
+            </span>
+            {{ isLoading ? 'Creando...' : 'Crear' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
