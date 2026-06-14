@@ -1,0 +1,67 @@
+{
+  "configVersion": 1,
+  "timestamp": 1781464352807,
+  "index": "/AppLogros/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/AppLogros/favicon.ico",
+        "/AppLogros/index.html",
+        "/AppLogros/main.6713a1e46c221c1e.js",
+        "/AppLogros/manifest.webmanifest",
+        "/AppLogros/polyfills.ebce2853f97b9e5c.js",
+        "/AppLogros/runtime.e33cfc2a7984a2ae.js",
+        "/AppLogros/styles.2a4757d057601590.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/AppLogros/16964731.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/AppLogros/16964731.png": "2e671686e4783af4bac8961394fe012293d97fc3",
+    "/AppLogros/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
+    "/AppLogros/index.html": "974ed2016a928f34b53a2f0df5b604bd7b7d71dc",
+    "/AppLogros/main.6713a1e46c221c1e.js": "c5e45fcc9e5e78a9ecc93f85748e01cd26b501a2",
+    "/AppLogros/manifest.webmanifest": "204ce7f8bb80bf7b5315bcfad648ad928dab423b",
+    "/AppLogros/polyfills.ebce2853f97b9e5c.js": "96e8ebadc2c4f9b3edde78d42385276a96989b94",
+    "/AppLogros/runtime.e33cfc2a7984a2ae.js": "8dbe8968117cc130788abfa0866cc9a4c1acab41",
+    "/AppLogros/styles.2a4757d057601590.css": "656c73de52d58d0a0e52b1c73838ac8b83d6b5b4"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
